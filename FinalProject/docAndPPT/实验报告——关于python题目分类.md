@@ -6,7 +6,7 @@
 
 181250093 柳斯宁 1225747052@qq.com 175 分工：代码下载和解压、分析代码难度部分
 
-
+181250049 黄迪 957822635@qq.com 150 分工：相似度分析样本选取、题目分类思路一部分
 
 #### 研究问题：
 
@@ -22,7 +22,11 @@
 
 analyseDifficulty 部分是分析以代码难度进行分类
 
-codeSim 部分是分析代码相似度 docAndPPT 用来放PPT
+codeSim 、codeSimVer1文件夹是分析代码相似度，codeSimVer1是相似度分析的思路一部分
+
+docAndPPT 用来放PPT
+
+codeSimFileAll 存放代码相似度分析的同学代码
 
 testfile 和testfiles是sample.json下载的代码  代码文件夹是test_data下载的代码 
 
@@ -108,7 +112,195 @@ testfile 和testfiles是sample.json下载的代码  代码文件夹是test_data�
 
 ![](https://nju-sjim.oss-cn-beijing.aliyuncs.com/DataScience/image-20200726173529557.png)
 
-2. 题目种类分类
+### 2. 实现代码分类
 
-#### 对老师说的话
+### **实现分类的关键之处在于分类的标准，在此部分中，我们设想题目和实现代码之间是有联系的，即我们可以通过观察代码来知道这是一道什么题目，因此我们可以通过比对同学们的实现代码，找出其内在联系来实现分类**
+
+
+
+#### 1. 第一种：在一个同学所写的全部代码中，将每两题之间的相似度分别记下，接着，我们采样更多的同学，最终为每两道题对应的相似度取均值
+
+#### 假设同学A和同学B做 题目1和题目2 两位同学的这两道题目都是满分
+然后求同学A 题目1和题目2的代码相似度
+        求同学B 题目1和题目2的代码相似度
+最后取这两个相似度的平均值
+我们也可以推广 不止有这两个同学
+
+#### 这样做另外的一个原因是：因不同人代码风格不一样 可能同一道题 两个人的差异确实会比较高我们认为 如果两道题相似 那么同一个人来做 他的代码应该是会相似的  
+
+
+
+**以下为实现代码解释和研究过程思考**
+
+---
+
+
+
+**1. codeSimFileAll文件夹**
+
+1. 采样方面，我从全部学生中筛选出了全部练习题满分的同学，其目的是为了能够保证每两道题都能进行比较一次，以及每次比较相对有效准确
+
+2. 在全部题都满分的同学中，又进一步通过人工筛选，过滤存在面向用例（即通过直接print方法打印答案实现满分）的同学，因为这部分同学会对比较结果产生较大影响
+
+   
+
+   下载代码如下:
+
+   ![](https://picbag.oss-cn-beijing.aliyuncs.com/dsPicStore/download.png)
+
+   最终随机采样如下：
+
+ 	![](https://picbag.oss-cn-beijing.aliyuncs.com/dsPicStore/codeSimFile.jpg)
+
+
+
+
+
+
+
+**2. analyse.py**
+
+我们求代码相似度的方式为对两段代码进行抽象语法树解析，然后计算这两棵树的编辑距离，编辑距离是指，只用插入、删除和替换三种操作，最少需要多少步可以把A变成B。例如，从FAME到GATE需要两步（两次替换），从GAME到ACM则需要三步（删除G和E再添加C）。
+
+计算编辑距离时选择引入第三方库zss，解析抽象语法树引入标准库中的ast
+
+树编辑距离计算公式为1 - 1*distance/max(tree_size1,tree_size2)，除数确保结果小于1
+
+其中，树的大小通过深度优先遍历来计算，simple_distance和Node是zss库中定义的计算编辑距离相关类和方法，传入变量为树的根节点
+
+![](https://picbag.oss-cn-beijing.aliyuncs.com/dsPicStore/distance.png)
+
+
+
+_CodeSim类的code_sim方法
+
+```
+# 
+fileroot 谁的文件夹 
+beginindex 从哪题开始逐步往后检测
+```
+
+![](https://picbag.oss-cn-beijing.aliyuncs.com/dsPicStore/codesim.png)
+
+
+
+_CodeSim类
+
+​	构造方法中为类内保存了比较主体的抽象树和编辑距离参数解析结果，避免了每次调用重新解析耗费时间，fileRoot是某个学生做题记录的根目录,beginIndex是开始往后比较的题目索引
+
+![](https://picbag.oss-cn-beijing.aliyuncs.com/dsPicStore/CodeSSim.png)
+
+<img src="https://picbag.oss-cn-beijing.aliyuncs.com/dsPicStore/codessim2.png" width='95%'
+
+
+
+
+
+
+
+**3. mainEntry.py  **
+
+ 入口函数，可以设置想要测试哪几个同学和他们的哪几题
+
+![](https://picbag.oss-cn-beijing.aliyuncs.com/dsPicStore/mainentry.png)
+
+
+
+
+
+
+
+**4. resultTest**
+
+用于对生成的原始数据进行分析，如每题与其他题的相似度分布情况等
+
+
+
+
+
+**5. buildGraph & graphTest**
+
+功能上一样，用于生成分析结果的图表，方便更直观的进行分析
+
+---
+
+下面以第一第二题（即Array）分析结果举例（html数据图已存在源码文件中）
+
+第一题的相似度片段：
+
+![](https://picbag.oss-cn-beijing.aliyuncs.com/dsPicStore/simtotal1.png)
+
+![](https://picbag.oss-cn-beijing.aliyuncs.com/dsPicStore/1%20%281%29.png)
+
+第二题的相似度片段：
+
+![](https://picbag.oss-cn-beijing.aliyuncs.com/dsPicStore/simtotal2.png)
+
+![](https://picbag.oss-cn-beijing.aliyuncs.com/dsPicStore/1%20%282%29.png)
+
+
+
+
+
+和第一题相似度超过0.3的题目如下：
+
+![](https://picbag.oss-cn-beijing.aliyuncs.com/dsPicStore/11.png)
+
+和第二题相似度超过0.3的题目如下：
+
+![](https://picbag.oss-cn-beijing.aliyuncs.com/dsPicStore/22.png)
+
+下面以与"ASCII码的降序排列"相似度最高的“斯蒂克勒小偷”为例进行分析：
+
+
+
+**"ASCII码的降序排列":**
+
+![](https://picbag.oss-cn-beijing.aliyuncs.com/dsPicStore/ex2.png)
+
+
+
+**“斯蒂克勒小偷”:**
+
+![](https://picbag.oss-cn-beijing.aliyuncs.com/dsPicStore/exn.png)
+
+
+
+**从解题思路上看，这两道题都需要遍历输入的数组（或是由输入转化生成的数组），另外，这两者都需要进行数组元素求和是否最大值的判断，在所采取的7位同学样本中，经过人工比对，这两道题解答代码所包含的循环层数最大值偏差仅为1.2，即接着两道题，同学们都用了相仿的循环层数，由此可见通过解答代码来进行题目分类适应了结题思路相仿的题目，具有一定的可行性**
+
+
+
+
+
+**6.  拓展思考**
+
+
+
+另外还进行了"相似的两道题是否都和另外的题相似"的思考：
+
+已知“ArrayPoisonous”题目和“ASCII码的降序排列”相似度超过 0.3，经比对，在上述过程中求得的相似度平均值中，第一题和第二题偏差绝对值的平均值为0.04
+
+下面是街区的相似度分布片段图：
+
+![](https://picbag.oss-cn-beijing.aliyuncs.com/dsPicStore/comp.png)
+
+可以明显的看出一个“同时高，同时低”的特点，因此可以猜测“相似“是可以传递的，分类时是可以根据"同类的同类"来进行
+
+----
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 对老师说的话
 
