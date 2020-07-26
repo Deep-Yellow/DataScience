@@ -198,7 +198,7 @@ _CodeSim类
 
 
 
-**3. mainEntry.py  **
+**3. mainEntry.py**
 
  入口函数，可以设置想要测试哪几个同学和他们的哪几题
 
