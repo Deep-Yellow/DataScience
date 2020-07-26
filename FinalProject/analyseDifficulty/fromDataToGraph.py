@@ -3,6 +3,19 @@ from pyecharts import options as opts
 from pyecharts.charts import Bar, Line
 from pyecharts.commons.utils import JsCode
 from pyecharts.globals import ThemeType
+import pandas as pd
+
+
+def getMax(l):
+    max = 0
+    min = 1000
+    for i in l:
+        if i['value'] > max:
+            max = i['value']
+        elif i['value'] < min:
+            min = i['value']
+    return max - min
+
 
 f1 = open('length.json', encoding='utf-8')  #
 res1 = f1.read()
@@ -16,19 +29,43 @@ score_list = json.loads(res3)
 f4 = open('time.json', encoding='utf-8')  #
 res4 = f4.read()
 time_list = json.loads(res4)
+f5 = open('length_all.json', encoding='utf-8')  #
+res5 = f5.read()
+len_all = json.loads(res5)
+f6 = open('score_all.json', encoding='utf-8')  #
+res6 = f6.read()
+score_all = json.loads(res6)
+f7 = open('time_all.json', encoding='utf-8')  #
+res7 = f7.read()
+time_all = json.loads(res7)
 f1.close()
 f2.close()
 f3.close()
 f4.close()
-# for i in range(len(id_list)):
-#     len_list[i] = {"value":len_list[i],"percent":len_list[i]/(max(len_list)-min(len_list))}
-#     score_list[i] = {"value": score_list[i], "percent": score_list[i] / (max(score_list) - min(score_list))}
-#     time_list[i] = {"value": time_list[i], "percent": time_list[i] / (max(time_list) - min(time_list))}
+f5.close()
+f6.close()
+f7.close()
+
+for i in range(len(id_list)):
+    len_series = pd.Series(len_all[i])
+    score_series = pd.Series(score_all[i])
+    time_series = pd.Series(time_all[i])
+    len_list[i] = {"value": len_list[i], "skew": len_series.skew(), "kurt": len_series.kurt()}
+    score_list[i] = {"value": score_list[i], "skew": score_series.skew(), "kurt": score_series.kurt()}
+    time_list[i] = {"value": time_list[i], "skew": time_series.skew(), "kurt": time_series.kurt()}
 
 length = (
     Bar(init_opts=opts.InitOpts(theme=ThemeType.LIGHT))
         .add_xaxis(id_list)
         .add_yaxis("相同caseId代码平均代码长度", len_list)
+        .set_series_opts(
+        label_opts=opts.LabelOpts(
+            position="right",
+            formatter=JsCode(
+                "function(x){return 偏度：x.data.skew+峰度:+x.data.kurt;}"
+            ),
+        )
+    )
         .set_global_opts(
         xaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(rotate=-90)),
         title_opts=opts.TitleOpts(title="代码长度分布"),
@@ -114,13 +151,14 @@ line = (
 
 len_time.overlap(line).render("len_time.html")
 
-
 res = []
-span_len = max(len_list)-min(len_list)
-span_score = max(score_list)-min(score_list)
-span_time = max(time_list)-min(time_list)
+span_len = getMax(len_list)
+span_score = getMax(score_list)
+span_time = getMax(time_list)
 for i in range(len(id_list)):
-    res.append(100*(0.5*len_list[i]/span_len+0.2*time_list[i]/span_time+0.3*score_list[i]/span_score))
+    temp = 100 * (0.5 * len_list[i]['value'] / span_len + 0.2 * time_list[i]['value'] / span_time + 0.3 * score_list[i][
+        'value'] / span_score)
+    res.append(temp)
 
 result = (
     Bar(init_opts=opts.InitOpts(theme=ThemeType.LIGHT))
