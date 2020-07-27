@@ -508,7 +508,9 @@ for i in range(n):
     print(result[i], end=' ')
 ```
 
+更多例子：
 
+![](https://nju.oss-cn-beijing.aliyuncs.com/ex.png)
 
 ##### ** 思路补充**
 
