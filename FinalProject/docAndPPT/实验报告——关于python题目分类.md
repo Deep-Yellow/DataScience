@@ -2,7 +2,7 @@
 
 
 
-#### 小组信息：3人 
+#### 小组信息：3人
 
 181250093 柳斯宁 1225747052@qq.com 175 分工：代码下载和解压、分析代码难度部分
 
@@ -18,7 +18,7 @@
 
 #### 代码结构
 
-![image-20200726112331410](C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20200726112331410.png)
+![](https://nju-sjim.oss-cn-beijing.aliyuncs.com/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/image-20200728162208533.png)
 
 其中
 
@@ -52,7 +52,7 @@ testfile 和testfiles是sample.json下载的代码  代码文件夹是test_data�
 
 1. 代码按难度分类部分
 
-##### analyseCodeToGenerateData.py 
+##### analyseCodeToGenerateData.py
 
 读入所有同学的代码进行分析计算产生关于代码长度、提交成绩、运行时间的json数据用于进行分析
 
