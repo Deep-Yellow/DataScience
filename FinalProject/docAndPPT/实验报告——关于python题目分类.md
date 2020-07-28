@@ -18,7 +18,7 @@
 
 #### 代码结构
 
-![image-20200726112331410](C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20200726112331410.png)
+![image-20200726112331410](https://picbag.oss-cn-beijing.aliyuncs.com/dsPicStore/structure.png)
 
 其中
 
@@ -114,19 +114,24 @@ testfile 和testfiles是sample.json下载的代码  代码文件夹是test_data�
 
 ![](https://nju-sjim.oss-cn-beijing.aliyuncs.com/DataScience/image-20200726173529557.png)
 
-### 2. 实现代码分类
+### 2. 通过代码实现分类
 
 ### **实现分类的关键之处在于分类的标准，在此部分中，我们设想题目和实现代码之间是有联系的，即我们可以通过观察代码来知道这是一道什么题目，因此我们可以通过比对同学们的实现代码，找出其内在联系来实现分类**
 
 
 
-#### 1. 第一种：在一个同学所写的全部代码中，将每两题之间的相似度分别记下，接着，我们采样更多的同学，最终为每两道题对应的相似度取均值
+#### 1. 第一种思路：在一个同学所写的全部代码中，将每两题之间的相似度分别记下，接着，我们采样更多的同学，最终为每两道题对应的相似度取均值
+
+
 
 #### 假设同学A和同学B做 题目1和题目2 两位同学的这两道题目都是满分
-然后求同学A 题目1和题目2的代码相似度
+
+#### 然后求同学A 题目1和题目2的代码相似度
         求同学B 题目1和题目2的代码相似度
 最后取这两个相似度的平均值
 我们也可以推广 不止有这两个同学
+
+
 
 #### 这样做另外的一个原因是：因不同人代码风格不一样 可能同一道题 两个人的差异确实会比较高我们认为 如果两道题相似 那么同一个人来做 他的代码应该是会相似的  
 
@@ -177,9 +182,7 @@ testfile 和testfiles是sample.json下载的代码  代码文件夹是test_data�
 _CodeSim类的code_sim方法
 
 ```
-# 
-fileroot 谁的文件夹 
-beginindex 从哪题开始逐步往后检测
+# fileroot 谁的文件夹  beginindex 从哪题开始逐步往后检测
 ```
 
 ![](https://picbag.oss-cn-beijing.aliyuncs.com/dsPicStore/codesim.png)
@@ -192,7 +195,7 @@ _CodeSim类
 
 ![](https://picbag.oss-cn-beijing.aliyuncs.com/dsPicStore/CodeSSim.png)
 
-<img src="https://picbag.oss-cn-beijing.aliyuncs.com/dsPicStore/codessim2.png" width='95%'
+<img src="https://picbag.oss-cn-beijing.aliyuncs.com/dsPicStore/codessim2.png" width='95%'>
 
 
 

@@ -35,6 +35,7 @@ for i in range(0, 198):
     #     list2.append(i)
         # list1.append(data[i])
         # list2.append(data2[i+1])
+
 print(count/200)
 # print(list2)
 # print(data2.index(max(list1)))
